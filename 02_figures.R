@@ -43,12 +43,12 @@ ggsave(
   filename = file.path("figures", "BALobj.svg"),
   plot = p,
   dpi = 400,
-  units = "px",
-  width = 425,
-  height = 400
+  units = "in",
+  width = 425/96,
+  height = 400/96
 )
 
-# Generate BAL feature plots (Figure B)
+# Generate BAL feature plots (Figure D)
 for (gene in features) {
 
   p <- FeaturePlot_scCustom(
@@ -71,6 +71,30 @@ for (gene in features) {
   )
 }
 
+#Generate BALobj Dotplot (Figure B)
+p <- DotPlot_scCustom(
+  BALobj,
+  features = features,
+  scale.by = "size",
+  x_lab_rotate = TRUE,
+  y_lab_rotate = TRUE,
+  col.min = 0,
+  colors_use = viridis::inferno(20)
+)  + 
+  theme(
+    legend.position = "bottom",
+    legend.box = "horizontal"
+  )
+ggsave(
+  filename = file.path(
+    "figures", "BALobj_dotplot.svg"),
+  plot = p,
+  dpi = 400,
+  units = "in",
+  width = 500/96,
+  height = 300/96
+)
+
 # Generate integrated lung UMAP split by study (Figure A, right)
 p <- DimPlot(
   lungobj_mye,
@@ -85,9 +109,33 @@ ggsave(
   filename = file.path("figures", "lungobj_mye_split.svg"),
   plot = p,
   dpi = 400,
-  units = "px",
-  width = 950,
-  height = 400
+  units = "in",
+  width = 9.375,
+  height = 5.208
+)
+
+#Generate lungobj_mye Dotplot (Figure C)
+p <- DotPlot_scCustom(
+  lungobj_mye,
+  features = features,
+  scale.by = "size",
+  x_lab_rotate = TRUE,
+  col.min = 0,
+  colors_use = viridis::inferno(20)
+)  + 
+  theme(
+  legend.position = "bottom",
+  legend.box = "horizontal"
+)
+
+ggsave(
+  filename = file.path(
+    "figures", "lungobj_mye_dotplot.svg"),
+  plot = p,
+  dpi = 400,
+  units = "in",
+  width = 600/96,
+  height = 350/96
 )
 
 # Subset Moshkelgosha et al. samples 
@@ -96,7 +144,7 @@ lungobj_mye_moshkelgosha <- subset(
   subset = StudyID == "Moshkelgosha et al."
 )
 
-# Generate Moshkelgosha et al. feature plots (Figure C, left)
+# Generate Moshkelgosha et al. feature plots (Figure E, left)
 for (gene in features) {
 
   p <- FeaturePlot_scCustom(
@@ -125,7 +173,7 @@ lungobj_mye_yan <- subset(
   subset = StudyID == "Yan et al."
 )
 
-# Generate Yan et al. feature plots (Figure C, right)
+# Generate Yan et al. feature plots (Figure E, right)
 for (gene in features) {
 
   p <- FeaturePlot_scCustom(
