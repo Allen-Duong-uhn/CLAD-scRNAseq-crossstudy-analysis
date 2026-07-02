@@ -148,15 +148,10 @@ public_CLAD$StudyID <- "Yan et al."
 
 #identify and subset myeloid cells
 public_CLAD.markers <- FindAllMarkers(public_CLAD, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
-
 public_CLAD.markers %>% group_by(cluster) %>% top_n(n = 10, wt = avg_log2FC)
-
 public_CLAD.TOP10 <- public_CLAD.markers %>% group_by(cluster) %>% top_n(n = 10, wt = avg_log2FC)
-
 VlnPlot(public_CLAD, features = c("MARCO", "CD14", "FCN1"))
-
 FeaturePlot(public_CLAD, reduction = "umap.harmony", features = c("MARCO", "CD14", "FCN1", "LGMN"), label = TRUE)
-
 public_CLADmye <- subset(public_CLAD, ident = c("1", "5", "19", "22"))
 
 # merge and integrate Yan, Khatri and Moshkelgosha_lungs
@@ -188,6 +183,43 @@ DimPlot(lungobj_mye, reduction = "umap.harmony", group.by = "StudyID", label = T
 DimPlot(lungobj_mye, reduction = "umap.harmony", label = TRUE)
 FeaturePlot_scCustom(lungobj_mye, reduction = "umap.harmony", label = TRUE, features = c("MARCO", "CD14", "FCN1", "S100A8", "S100A9", "LGMN"), num_columns = 5)
 
+# annotation of lungobj_mye
+DimPlot_scCustom(lungobj_mye, label = TRUE, reduction = "umap.harmony")
+FeaturePlot_scCustom(lungobj_mye, label = TRUE, reduction = "umap.harmony", features = c("FABP4", "MARCO", "LGMN", "FCN1", "CD14", "MKI67"))
+VlnPlot(lungobj_mye, features = c("FABP4", "MARCO", "LGMN", "FOLR2", "FCN1", "CD14", "S100A8", "S100A9"))
+VlnPlot(lungobj_mye, features = c("SLAMF7", "IDO1", "CALHM6", "VAMP5", "GBP5", "CXCL9", "CXCL10", "CXCL11", "IL32", "IL4I1"))
+
+lungobj_macs_ids <- c("Interstitial Macrophage" #0
+                      ,"Alveolar Macrophage" #1 
+                      ,"Monocyte" #2
+                      ,"Alveolar Macrophage" #3
+                      ,"Alveolar Macrophage" #4
+                      ,"Interstitial Macrophage" #5
+                      ,"Monocyte/Macrophage" #6
+                      ,"Alveolar Macrophage" #7
+                      ,"Alveolar Macrophage" #8
+                      ,"Alveolar Macrophage" #9
+                      ,"Monocyte/Macrophage" #10
+                      ,"ISG/Super.Macro" #11 
+                      ,"Interstitial Macrophage" #12
+                      ,"Monocyte" #13
+                      ,"Alveolar Macrophage" #14
+                      ,"Monocyte" #15
+                      ,"Alveolar Macrophage" #16
+                      ,"ISG/Super.Macro" #17
+                      ,"Monocyte/Macrophage" #18
+                      ,"Alveolar Macrophage" #19
+                      ,"Alveolar Macrophage" #20
+                      ,"Monocyte/Macrophage" #21 
+                      ,"Monocyte/Macrophage" #22
+                      ,"Alveolar Macrophage" #23
+)
+names(lungobj_macs_ids) <- levels(lungobj_mye)
+lungobj_mye <- RenameIdents(lungobj_mye, lungobj_macs_ids)
+lungobj_mye$MacsLabels <- Idents(lungobj_mye)
+
+DimPlot(lungobj_mye, reduction = "umap.harmony", label = TRUE)
+
 # BAL integration
 BALobj <- merge(SBALMac, c(DBALMac))
 BALobj <- JoinLayers(BALobj)
@@ -211,10 +243,35 @@ BALobj <- BALobj %>%
   RunUMAP(reduction = "integrated.cca", dims = 1:30, reduction.name = "umap.harmony") %>% 
   JoinLayers()
 
+# annotation of BALobj
+DimPlot_scCustom(BALobj, label = TRUE, reduction = "umap.cca")
+FeaturePlot_scCustom(BALobj, label = TRUE, reduction = "umap.cca", features = c("FABP4", "MARCO", "LGMN", "FCN1", "CD14", "MKI67"))
+VlnPlot(BALobj, features = c("FABP4", "MARCO", "LGMN", "FCN1", "CD14", "S100A8", "S100A9"))
+VlnPlot(BALobj, features = c("SLAMF7", "IDO1", "CALHM6", "VAMP5", "GBP5", "CXCL9", "CXCL10", "CXCL11", "IL32", "IL4I1"))
+
+BALobj_macs_ids <- c("Alveolar Macrophage" #0
+                      ,"Alveolar Macrophage" #1 
+                      ,"Alveolar Macrophage" #2
+                      ,"Monocyte/Macrophage" #3
+                      ,"Alveolar Macrophage" #4
+                      ,"Alveolar Macrophage" #5
+                      ,"Alveolar Macrophage" #6
+                      ,"Cycling Macrophage" #7
+                      ,"Alveolar Macrophage" #8
+                      ,"ISG Macrophage" #9
+)
+names(BALobj_macs_ids) <- levels(BALobj)
+BALobj <- RenameIdents(BALobj, BALobj_macs_ids)
+BALobj$MacsLabels <- Idents(BALobj)
+
+DimPlot(BALobj, reduction = "umap.cca", label = TRUE)
+
+
 # save new .rds files
 dir.create("results", showWarnings = FALSE)
 
 saveRDS(lungobj_mye, "results/lungobj_mye_integrated.rds")
+saveRDS(BALobj_mye, "results/BALobj.rds")
 
 # save reproducibility information
 capture.output(sessionInfo(), file = "results/sessionInfo.txt")
