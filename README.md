@@ -13,14 +13,17 @@ Workflow:
   2. Perform QC and preprocessing
   3. Integrate datasets
   4. Identify myeloid/macrophage population
-  5. Generate integrated objects
+  6. Generate integrated objects
+  7. Annotate myeloid/macrophage subsets
 
 ### 02_figures.R
 Workflow:
   1. Generate UMAP for BAL samples
-  2. Generate feature plots for BAL samples
-  3. Generate UMAP for lung samples, split by study
-  4. Generate feature plots for lung samples, split by study
+  2. Generate dot plot for BAL samples
+  3. Generate feature plots for BAL samples
+  4. Generate UMAP for lung samples, split by study
+  5. Generate dot plot for lung samples
+  6. Generate feature plots for lung samples, split by study
 
 ## Software
 
